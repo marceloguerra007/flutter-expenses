@@ -61,6 +61,13 @@ class TransactionList extends StatelessWidget {
           TransactionCard(title: tr.title, value: tr.value, date: tr.date))
       .toList();
 
-    return Column(children: <Widget>[...transactionWidgets]);
+    return Container(
+      height: 300,
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[...transactionWidgets]
+          )
+        ),
+    );
   }
 }
