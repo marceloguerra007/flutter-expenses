@@ -63,11 +63,11 @@ class TransactionList extends StatelessWidget {
 
     return Container(
       height: 300,
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[...transactionWidgets]
-          )
-        ),
-    );
+      child: ListView.builder(
+        itemCount: transactionWidgets.length,
+        itemBuilder: (ctx, index){          
+          return (transactionWidgets[index]);
+        })
+      );
   }
 }
