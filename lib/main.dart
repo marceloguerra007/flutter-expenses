@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'dart:math';
 
@@ -12,7 +14,26 @@ main() => runApp(ExpensesApp());
 class ExpensesApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: MyHomePage());
+    return MaterialApp(
+      home: MyHomePage(),
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+        accentColor: Colors.orangeAccent,
+        fontFamily: 'Quicksand',
+        textTheme: ThemeData.light().textTheme.copyWith(
+          headline3: TextStyle(
+              fontFamily: 'OpenSans',
+              fontSize: 15)
+        ),
+        appBarTheme: AppBarTheme(
+          textTheme: ThemeData.light().textTheme.copyWith(
+            headline6: TextStyle(
+              fontFamily: 'OpenSans',
+              fontSize: 20,
+              fontWeight: FontWeight.bold) 
+          )) //Swatch define uma lista de cores do Material Design.
+      ),  
+    );
   }
 }
 
@@ -22,10 +43,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final _transactions = [
-    Transaction(id: '1', title: 'Livro', value: 37.50, date: DateTime.now()),
-    Transaction(
-        id: '2', title: 'Mercado SV', value: 121.77, date: DateTime.now())
+  final List<Transaction> _transactions = [
+    // Transaction(id: '1', title: 'Livro', value: 37.50, date: DateTime.now()),
+    // Transaction(
+    //     id: '2', title: 'Mercado SV', value: 121.77, date: DateTime.now())
   ];
 
   _addTransaction(String title, double value) {
@@ -38,21 +59,25 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _transactions.add(newTransaction);
     });
+
+    Navigator.of(context).pop(); //Fechar o modal.
   }
 
-  _openTransactionFormModal(BuildContext context) {        
+  _openTransactionFormModal(BuildContext context) {
     showModalBottomSheet(
-      context: context,
-      builder: (ctx) {
-        return TransactionForm(_addTransaction);
-      });
+        context: context,
+        builder: (ctx) {
+          return TransactionForm(_addTransaction);
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Despesas Pessoais'),
+        appBar: AppBar(          
+          title: Text(
+            'Despesas Pessoais',
+          ),
           actions: [
             IconButton(
                 onPressed: () => _openTransactionFormModal(context),

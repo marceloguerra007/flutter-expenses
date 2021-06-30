@@ -33,14 +33,18 @@ class TransactionCard extends StatelessWidget {
           children: [
             Text(
               title,
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.blueGrey,
-                  fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.headline3,
+              //style: TextStyle(
+              //    fontSize: 16,
+              //    color: Theme.of(context).primaryColorDark,
+              //    fontWeight: FontWeight.bold),
             ),
             Text(
               DateFormat('d MMM y').format(date),
-              style: TextStyle(fontSize: 14, color: Colors.black),
+              style: TextStyle(
+                fontSize: 14, 
+                color: Theme.of(context).primaryColor
+              ),
             )
           ],
         )
@@ -63,11 +67,30 @@ class TransactionList extends StatelessWidget {
 
     return Container(
       height: 300,
-      child: ListView.builder(
-        itemCount: transactionWidgets.length,
-        itemBuilder: (ctx, index){          
-          return (transactionWidgets[index]);
-        })
+      child: transactionWidgets.isEmpty 
+        ? Column(
+          children: [
+            SizedBox(height: 20,),
+            Text(
+              'Nenhuma transação cadastrada!',
+              style: Theme.of(context).textTheme.headline4
+            ),
+            SizedBox(height: 20,),            
+            Container(
+              height: 200,
+              child: Image.asset(
+                'assets/images/waiting.png',
+                fit: BoxFit.cover
+              ),
+            )
+          ]
+        ) 
+        :ListView.builder(
+          itemCount: transactionWidgets.length,
+          itemBuilder: (ctx, index){          
+            return (transactionWidgets[index]);
+          }
+        )
       );
   }
 }

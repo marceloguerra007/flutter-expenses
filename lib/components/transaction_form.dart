@@ -42,14 +42,14 @@ class _TransactionFormState extends State<TransactionForm> {
               decoration: InputDecoration(labelText: 'Valor (R\$'),
               controller: valueController,
               keyboardType: TextInputType.numberWithOptions(
-                  decimal: true), //dessa forma funciona também no IOS
+                decimal: true), //dessa forma funciona também no IOS
               onSubmitted: (value) => _submitForm(),
             ),
             Row(mainAxisAlignment: MainAxisAlignment.end, children: [
               TextButton(
                   onPressed: _submitForm,
                   child: Text('Nova Transação',
-                      style: TextStyle(color: Colors.orange))),
+                    style: TextStyle(color: Colors.orange))),
             ])
           ],
         ),
