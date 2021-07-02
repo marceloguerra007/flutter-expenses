@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:expenses/components/chart.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
@@ -8,6 +9,7 @@ import 'package:expenses/components/transaction_list.dart';
 import '../models/transaction.dart';
 
 import 'package:expenses/components/transaction_form.dart';
+import 'package:expenses/components/chart.dart';
 
 main() => runApp(ExpensesApp());
 
@@ -17,22 +19,19 @@ class ExpensesApp extends StatelessWidget {
     return MaterialApp(
       home: MyHomePage(),
       theme: ThemeData(
-        primarySwatch: Colors.green,
-        accentColor: Colors.orangeAccent,
-        fontFamily: 'Quicksand',
-        textTheme: ThemeData.light().textTheme.copyWith(
-          headline3: TextStyle(
-              fontFamily: 'OpenSans',
-              fontSize: 15)
-        ),
-        appBarTheme: AppBarTheme(
+          primarySwatch: Colors.green,
+          accentColor: Colors.orangeAccent,
+          fontFamily: 'Quicksand',
           textTheme: ThemeData.light().textTheme.copyWith(
-            headline6: TextStyle(
-              fontFamily: 'OpenSans',
-              fontSize: 20,
-              fontWeight: FontWeight.bold) 
-          )) //Swatch define uma lista de cores do Material Design.
-      ),  
+              headline3: TextStyle(fontFamily: 'OpenSans', fontSize: 15)),
+          appBarTheme: AppBarTheme(
+              textTheme: ThemeData.light().textTheme.copyWith(
+                  headline6: TextStyle(
+                      fontFamily: 'OpenSans',
+                      fontSize: 20,
+                      fontWeight: FontWeight
+                          .bold))) //Swatch define uma lista de cores do Material Design.
+          ),
     );
   }
 }
@@ -44,10 +43,23 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _transactions = [
-    // Transaction(id: '1', title: 'Livro', value: 37.50, date: DateTime.now()),
-    // Transaction(
-    //     id: '2', title: 'Mercado SV', value: 121.77, date: DateTime.now())
+    Transaction(
+        id: '1',
+        title: 'Livro',
+        value: 37.50,
+        date: DateTime.now().subtract(Duration(days: 2))),
+    Transaction(
+        id: '2',
+        title: 'Mercado SV',
+        value: 121.77,
+        date: DateTime.now().subtract(Duration(days: 3)))
   ];
+
+  List<Transaction> get _recentTransaction {
+      return _transactions.where((tr) {
+        return tr.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+      }).toList();      
+  }
 
   _addTransaction(String title, double value) {
     final newTransaction = Transaction(
@@ -74,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(          
+        appBar: AppBar(
           title: Text(
             'Despesas Pessoais',
           ),
@@ -89,10 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(
-                width: double.infinity,
-                child: Card(child: Text('Gráfico'), elevation: 5),
-              ),
+              Chart(_recentTransaction),
               TransactionList(_transactions)
             ],
           ),
