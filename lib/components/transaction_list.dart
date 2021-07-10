@@ -63,28 +63,26 @@ class TransactionList extends StatelessWidget {
             onDelete: onDelete,))
         .toList();
 
-    return Container(
-        height: 300,
-        child: transactionWidgets.isEmpty
-            ? Column(children: [
-                SizedBox(
-                  height: 20,
-                ),
-                Text('Nenhuma transação cadastrada!',
-                    style: Theme.of(context).textTheme.headline4),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  height: 200,
-                  child: Image.asset('assets/images/waiting.png',
-                      fit: BoxFit.cover),
-                )
-              ])
-            : ListView.builder(
-                itemCount: transactionWidgets.length,
-                itemBuilder: (ctx, index) {
-                  return (transactionWidgets[index]);
-                }));
+    return transactionWidgets.isEmpty
+        ? Column(children: [
+            SizedBox(
+              height: 20,
+            ),
+            Text('Nenhuma transação cadastrada!',
+                style: Theme.of(context).textTheme.headline4),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+              height: 200,
+              child: Image.asset('assets/images/waiting.png',
+                  fit: BoxFit.cover),
+            )
+          ])
+        : ListView.builder(
+            itemCount: transactionWidgets.length,
+            itemBuilder: (ctx, index) {
+              return (transactionWidgets[index]);
+            });
   }
 }
