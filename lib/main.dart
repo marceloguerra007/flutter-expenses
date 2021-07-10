@@ -23,7 +23,9 @@ class ExpensesApp extends StatelessWidget {
           accentColor: Colors.orangeAccent,
           fontFamily: 'Quicksand',
           textTheme: ThemeData.light().textTheme.copyWith(
-              headline3: TextStyle(fontFamily: 'OpenSans', fontSize: 15)),
+              headline3: TextStyle(fontFamily: 'OpenSans', fontSize: 15),
+              button:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           appBarTheme: AppBarTheme(
               textTheme: ThemeData.light().textTheme.copyWith(
                   headline6: TextStyle(
@@ -32,6 +34,7 @@ class ExpensesApp extends StatelessWidget {
                       fontWeight: FontWeight
                           .bold))) //Swatch define uma lista de cores do Material Design.
           ),
+      //supportedLocales: [const Locale('pt','BR')],
     );
   }
 }
@@ -42,7 +45,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _transactions = [
+  late final List<Transaction> _transactions = [];
+  /*= [
     Transaction(
         id: '1',
         title: 'Livro',
@@ -53,26 +57,32 @@ class _MyHomePageState extends State<MyHomePage> {
         title: 'Mercado SV',
         value: 121.77,
         date: DateTime.now().subtract(Duration(days: 3)))
-  ];
+  ];*/
 
   List<Transaction> get _recentTransaction {
-      return _transactions.where((tr) {
-        return tr.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
-      }).toList();      
+    return _transactions.where((tr) {
+      return tr.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList();
   }
 
-  _addTransaction(String title, double value) {
+  _addTransaction(String title, double value, DateTime date) {
     final newTransaction = Transaction(
         id: Random().nextDouble().toString(),
         title: title,
         value: value,
-        date: DateTime.now());
+        date: date);
 
     setState(() {
       _transactions.add(newTransaction);
     });
 
     Navigator.of(context).pop(); //Fechar o modal.
+  }
+
+  _deleteTransaction(String id) {
+    setState(() {
+      _transactions.removeWhere((tr) => tr.id == id);
+    });
   }
 
   _openTransactionFormModal(BuildContext context) {
@@ -101,8 +111,8 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Chart(_recentTransaction),
-              TransactionList(_transactions)
+              (_transactions.isEmpty ? Container() : Chart(_recentTransaction)),
+              TransactionList(_transactions, _deleteTransaction)
             ],
           ),
         ),
