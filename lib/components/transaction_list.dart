@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import '../models/transaction.dart';
 import 'package:intl/intl.dart';
 
@@ -56,29 +57,36 @@ class TransactionList extends StatelessWidget {
     List<Widget> transactionWidgets = this
         .transactions
         .map<Widget>((tr) => TransactionCard(
-            id: tr.id, 
-            title: tr.title, 
-            value: tr.value, 
-            date: tr.date,
-            onDelete: onDelete,))
+              id: tr.id,
+              title: tr.title,
+              value: tr.value,
+              date: tr.date,
+              onDelete: onDelete,
+            ))
         .toList();
 
     return transactionWidgets.isEmpty
-        ? Column(children: [
-            SizedBox(
-              height: 20,
-            ),
-            Text('Nenhuma transação cadastrada!',
-                style: Theme.of(context).textTheme.headline4),
-            SizedBox(
-              height: 20,
-            ),
-            Container(
-              height: 200,
-              child: Image.asset('assets/images/waiting.png',
-                  fit: BoxFit.cover),
-            )
-          ])
+        ? LayoutBuilder(builder: (ctx, constraints) {
+            return Column(children: [
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                height: constraints.maxHeight * 0.3,
+                child: Text(
+                  'Nenhuma transação cadastrada!',
+                  style: Theme.of(context).textTheme.headline4),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                height: constraints.maxHeight * 0.5,
+                child:
+                    Image.asset('assets/images/waiting.png', fit: BoxFit.cover),
+              )
+            ]);
+          })
         : ListView.builder(
             itemCount: transactionWidgets.length,
             itemBuilder: (ctx, index) {
