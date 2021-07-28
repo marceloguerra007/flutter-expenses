@@ -10,7 +10,6 @@ import 'package:flutter/services.dart';
 import '../models/transaction.dart';
 
 import 'package:expenses/components/transaction_form.dart';
-import 'package:expenses/components/chart.dart';
 
 main() => runApp(ExpensesApp());
 
@@ -100,15 +99,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    bool isLandScape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
+    final mediaQuery = MediaQuery.of(context);
+    bool isLandScape = mediaQuery.orientation == Orientation.landscape;
 
     final appBar = AppBar(
       title: Text(
         'Despesas Pessoais',
         style: TextStyle(
             fontSize: 10 *
-                MediaQuery.of(context)
+                mediaQuery
                     .textScaleFactor), //Usado para considerar uma escala quando há acessibilidade
       ),
       actions: [
@@ -128,9 +127,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
 
-    final availableHeight = MediaQuery.of(context).size.height -
+    final availableHeight = mediaQuery.size.height -
         appBar.preferredSize.height -
-        MediaQuery.of(context).padding.top;
+        mediaQuery.padding.top;
 
     return Scaffold(
         appBar: appBar,
@@ -139,20 +138,24 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (!_transactions.isEmpty && (!isLandScape || _showChart))
+              if (_transactions.isNotEmpty && (!isLandScape || _showChart))
                 Container(
                     height: availableHeight * (isLandScape ? 0.70 : 0.30),
                     child: Chart(_recentTransaction)),
-              if (!_showChart || !isLandScape)
+              if (!isLandScape || !_showChart)
                 Container(
-                    height: availableHeight * 0.70,
+                    height: availableHeight * (isLandScape ? 0.5 : 0.30),
                     child: TransactionList(_transactions, _deleteTransaction))
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: () => _openTransactionFormModal(context)),
+        floatingActionButton: /*Platform.isIOS //Não pode ser utilizado em apps Web
+          ? Container()
+          : */
+          FloatingActionButton(
+              child: Icon(Icons.add),
+              onPressed: () => _openTransactionFormModal(context)
+            ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);
   }
 }

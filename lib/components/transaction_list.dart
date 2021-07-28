@@ -36,13 +36,27 @@ class TransactionCard extends StatelessWidget {
         ),
         subtitle: Text(DateFormat('d MMM y').format(date),
             style: Theme.of(context).textTheme.subtitle1),
-        trailing: IconButton(
-          icon: Icon(Icons.delete),
-          color: Theme.of(context).errorColor,
-          onPressed: () => onDelete(id),
-        ),
-      ),
-    );
+        
+        trailing:  (MediaQuery.of(context).size.width > 400) 
+          ? TextButton.icon(
+              icon: Icon(
+                Icons.delete, 
+                color: Theme.of(context).errorColor
+              ),
+              label: Text(
+                'Excluir', 
+                style: TextStyle(color: Theme.of(context).errorColor)
+              ),
+              onPressed: () => onDelete(id), 
+            )
+          : IconButton(              
+              icon: Icon(Icons.delete),
+              color: Theme.of(context).errorColor,
+              onPressed: () => onDelete(id)
+            ),
+          //],       
+      )
+    );    
   }
 }
 
@@ -75,7 +89,8 @@ class TransactionList extends StatelessWidget {
                 height: constraints.maxHeight * 0.3,
                 child: Text(
                   'Nenhuma transação cadastrada!',
-                  style: Theme.of(context).textTheme.headline4),
+                  style: Theme.of(context).textTheme.headline3),
+                  
               ),
               SizedBox(
                 height: 20,
