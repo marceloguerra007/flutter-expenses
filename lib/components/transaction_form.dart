@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+
+import 'adaptative_text_field.dart';
+import 'adaptative_button.dart';
+import 'adaptative_date_picker.dart';
 
 class TransactionForm extends StatefulWidget {
   final void Function(String, double, DateTime) onSubmit;
@@ -26,22 +29,6 @@ class _TransactionFormState extends State<TransactionForm> {
     widget.onSubmit(title, value, _selectedDate);
   }
 
-  _showDatePicker() {
-    showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2019),
-      lastDate: DateTime.now(),
-      //locale: const Locale('pt','BR')
-    ).then((pickedDate) {
-      if (pickedDate != null) {
-        setState(() {
-          _selectedDate = pickedDate;  
-        });        
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -49,49 +36,36 @@ class _TransactionFormState extends State<TransactionForm> {
         elevation: 5,
         child: Padding(
           padding: EdgeInsets.only(
-            top: 10, 
-            right: 10,
-            left: 10,
-            bottom: 10 + MediaQuery.of(context).viewInsets.bottom
-          ),
+              top: 10,
+              right: 10,
+              left: 10,
+              bottom: 10 + MediaQuery.of(context).viewInsets.bottom),
           child: Column(
             children: [
-              TextField(
-                decoration: InputDecoration(labelText: 'Título'),
+              AdaptativeTextField(
+                label: 'Título',
                 controller: _titleController,
                 onSubmitted: (value) => _submitForm(),
               ),
-              TextField(
-                decoration: InputDecoration(labelText: 'Valor (R\$'),
+              AdaptativeTextField(
+                label: 'Valor (R\$',
                 controller: _valueController,
                 keyboardType: TextInputType.numberWithOptions(
                     decimal: true), //dessa forma funciona também no IOS
                 onSubmitted: (value) => _submitForm(),
               ),
-              Container(
-                height: 70,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Data Selecionada: ${DateFormat('d/MM/y').format(_selectedDate)}'
-                      ),
-                    ),
-                    TextButton(
-                        child: Text(
-                          'Selecionar Data',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        onPressed: _showDatePicker)
-                  ],
-                ),
-              ),
+              AdaptativeDatePicker(
+                  selectedDate: _selectedDate,
+                  onDateChanged: (newDate) {
+                    setState(() {
+                      _selectedDate = newDate;
+                    });
+                  }),
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                ElevatedButton(
-                    onPressed: _submitForm,
-                    child: Text('Nova Transação',
-                        style: TextStyle(
-                            color: Theme.of(context).textTheme.button!.color))),
+                AdaptativeButton(
+                  label: 'Nova Transação',
+                  onPressed: _submitForm,
+                )
               ])
             ],
           ),

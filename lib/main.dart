@@ -97,12 +97,55 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
+  Widget _getIconButton(IconData icon, Function() fn) {
+    /*
+    //No caso de mobile, pode-se utilizar o seguinte código para customizar para o IOS:
+    return Platform.isIOS
+    ? GestureDetector()
+    : */
+    return IconButton(
+      icon: Icon(icon),
+      onPressed: fn,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     bool isLandScape = mediaQuery.orientation == Orientation.landscape;
 
-    final appBar = AppBar(
+    final iconList = /*Platform.isIOS ? CupertinoIcons.refresh :*/ Icons.list;
+    final chartList = /*Platform.isIOS ? CupertinoIcons.refresh :*/ Icons
+        .show_chart;
+
+    final actions = [
+      if (isLandScape) 
+        _getIconButton(_showChart ? iconList : chartList, () {
+          setState(() {
+            _showChart = !_showChart;
+          });
+        }),
+      _getIconButton(
+        /* Platform.isOS ? CupertinoIcons.add : */
+        Icons.add,
+        () => _openTransactionFormModal(context),
+      ),
+    ];
+
+    final PreferredSizeWidget appBar =
+        /*
+    //No caso de mobile, pode-se utilizar o seguinte código para customizar para o IOS:
+    Platform.isIOS
+    ? CupertinoNavigationBar(
+        middle: Text('Despesas Pessoais')
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min
+          children: actions
+        )
+      )
+    :
+    */
+        AppBar(
       title: Text(
         'Despesas Pessoais',
         style: TextStyle(
@@ -110,52 +153,49 @@ class _MyHomePageState extends State<MyHomePage> {
                 mediaQuery
                     .textScaleFactor), //Usado para considerar uma escala quando há acessibilidade
       ),
-      actions: [
-        if (isLandScape)
-          IconButton(
-            icon: Icon(_showChart ? Icons.list : Icons.show_chart),
-            onPressed: () {
-              setState(() {
-                _showChart = !_showChart;
-              });
-            },
-          ),
-        IconButton(
-          icon: Icon(Icons.add),
-          onPressed: () => _openTransactionFormModal(context),
-        ),
-      ],
+      actions: actions,
     );
 
     final availableHeight = mediaQuery.size.height -
         appBar.preferredSize.height -
         mediaQuery.padding.top;
 
+    final bodyPage = SafeArea(
+        child: SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_transactions.isNotEmpty && (!isLandScape || _showChart))
+            Container(
+                height: availableHeight * (isLandScape ? 0.70 : 0.30),
+                child: Chart(_recentTransaction)),
+          if (!isLandScape || !_showChart)
+            Container(
+                height: availableHeight * (isLandScape ? 0.5 : 0.30),
+                child: TransactionList(_transactions, _deleteTransaction))
+        ],
+      ),
+    ));
+    /*
+    No caso de mobile, pode-se utilizar o seguinte código para customizar para o IOS:
+    Platform.isIOS
+    ? CupertinoPageScaffold(
+      child : bodyPage,
+      navigationBar :  //Substitui o AppBar 
+    )
+
+     */
     return Scaffold(
         appBar: appBar,
-        body: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (_transactions.isNotEmpty && (!isLandScape || _showChart))
-                Container(
-                    height: availableHeight * (isLandScape ? 0.70 : 0.30),
-                    child: Chart(_recentTransaction)),
-              if (!isLandScape || !_showChart)
-                Container(
-                    height: availableHeight * (isLandScape ? 0.5 : 0.30),
-                    child: TransactionList(_transactions, _deleteTransaction))
-            ],
-          ),
-        ),
-        floatingActionButton: /*Platform.isIOS //Não pode ser utilizado em apps Web
+        body: bodyPage,
+        floatingActionButton:
+            /*Platform.isIOS //Não pode ser utilizado em apps Web
           ? Container()
           : */
-          FloatingActionButton(
-              child: Icon(Icons.add),
-              onPressed: () => _openTransactionFormModal(context)
-            ),
+            FloatingActionButton(
+                child: Icon(Icons.add),
+                onPressed: () => _openTransactionFormModal(context)),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);
   }
 }
