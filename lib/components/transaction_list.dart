@@ -14,6 +14,8 @@ class TransactionList extends StatelessWidget {
     List<Widget> transactionWidgets = this
         .transactions
         .map<Widget>((tr) => TransactionCard(
+              //key : ValueKey(tr.id), //Apresenta um bug no ListView.builder
+              key : GlobalObjectKey(tr),
               id: tr.id,
               title: tr.title,
               value: tr.value,
@@ -30,10 +32,8 @@ class TransactionList extends StatelessWidget {
               ),
               Container(
                 height: constraints.maxHeight * 0.3,
-                child: Text(
-                  'Nenhuma transação cadastrada!',
-                  style: Theme.of(context).textTheme.headline3),
-                  
+                child: Text('Nenhuma transação cadastrada!',
+                    style: Theme.of(context).textTheme.headline3),
               ),
               SizedBox(
                 height: 20,
